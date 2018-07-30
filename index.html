@@ -199,9 +199,77 @@
         </ul>
 
         <h2 id="warnings" class="anchor">Warnings and Suggestions</h2>
-        <note-callout>
-            I have not implemented this header just yet.
-        </note-callout>
+        <p>
+            The first analysis produced a warning that the HTTP endpoint of the website does
+            not redirect to HTTPS, it also outlined the good practice of removing
+            the
+            <em>Server</em> and
+            <em>X-Powered-By</em> headers. In order to do this we first need to create
+            a
+            <code>web.config</code> file.
+        </p>
+        <h4>Remove Server Version</h4>
+        <p>To remove the server response header, in the
+            <code>web.config</code> file we need the following line:
+            <pre><code class="language-markup">&lt;requestFiltering removeServerHeader="true" /></code></pre>
+        </p>
+
+        <h4>Remove X-Powered-By Header</h4>
+        <p>To remove the X-Powered-By response header, in the
+            <code>web.config</code> file we need the following line:
+            <pre><code class="language-markup">&lt;remove name="X-Powered-By"/></code></pre>
+        </p>
+
+        <h4>Remove X-AspNet-Version Header</h4>
+        <p>To remove the X-AspNet-Version response header which isn't highlighted on the analysis because it is an ISS header only, in the
+            <code>web.config</code> file we need the following line:
+            <pre><code class="language-markup">&lt;httpRuntime enableVersionHeader="false"/></code></pre>
+        </p>
+
+        <h4>Redirect HTTP to HTTPS</h4>
+        <p>To redirect HTTP traffic to HTTPS automatically we need more than a single line in the <code>web.config</code>.
+            We add a rewrite rule that will send all traffic to HTTPS with a <code>301</code> redirect.
+            <pre><code class="language-markup">&lt;rule name="Redirect to https">
+  &lt;match url="(.*)"/>
+  &lt;conditions>
+    &lt;add input="{HTTPS}" pattern="Off"/>
+    &lt;add input="{REQUEST_METHOD}" pattern="^get$|^head$" />
+  &lt;/conditions>
+  &lt;action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent"/>
+&lt;/rule></code></pre>
+        </p>
+
+        <h4>Review</h4>
+The complete <code>web.config</code> file for removing the warnings is below.
+        <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;configuration>
+  &lt;system.web>
+    &lt;httpRuntime enableVersionHeader="false"/>
+  &lt;/system.web>
+  &lt;system.webServer>
+    &lt;security>
+      &lt;requestFiltering removeServerHeader="true" />
+    &lt;/security>
+    &lt;httpProtocol>
+      &lt;customHeaders>
+        &lt;remove name="X-Powered-By"/>
+      &lt;/customHeaders>
+    &lt;/httpProtocol>
+    &lt;rewrite>
+      &lt;rules>
+        &lt;rule name="Redirect to https">
+          &lt;match url="(.*)"/>
+          &lt;conditions>
+            &lt;add input="{HTTPS}" pattern="Off"/>
+            &lt;add input="{REQUEST_METHOD}" pattern="^get$|^head$" />
+          &lt;/conditions>
+          &lt;action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent"/>
+        &lt;/rule>
+      &lt;/rules>
+    &lt;/rewrite>
+  &lt;/system.webServer>
+&lt;/configuration>
+</code></pre>
 
         <h2 id="x-frame-options" class="anchor">X-Frame-Options</h2>
         <note-callout>
@@ -238,6 +306,30 @@
             I have not implemented this header just yet.
         </note-callout>
 
+        <h2>Useful links/sources</h2>
+        <ul>
+            <li>
+                <a href="https://scotthelme.co.uk/content-security-policy-an-introduction/">https://scotthelme.co.uk/content-security-policy-an-introduction/</a>
+            </li>
+            <li>
+                <a href="https://scotthelme.co.uk/csp-cheat-sheet/">https://scotthelme.co.uk/csp-cheat-sheet/</a>
+            </li>
+            <li>
+                <a href="https://tomssl.com/2016/06/30/how-to-fix-the-http-response-headers-on-azure-web-apps-to-get-an-a-plus-on-securityheaders-io/">https://tomssl.com/2016/06/30/how-to-fix-the-http-response-headers-on-azure-web-apps-to-get-an-a-plus-on-securityheaders-io/</a>
+            </li>
+            <li>
+                <a href="https://report-uri.com/">https://report-uri.com/</a>
+            </li>
+            <li>
+                <a href="https://www.owasp.org/index.php/.NET_Security_Cheat_Sheet">https://www.owasp.org/index.php/.NET_Security_Cheat_Sheet</a>
+            </li>
+            <li>
+                <a href="https://cdnjs.com/libraries">https://cdnjs.com/libraries</a>
+            </li>
+            <li>
+                <a href="https://rahulpnath.com/blog/ok-i-have-got-https-what-next/">https://rahulpnath.com/blog/ok-i-have-got-https-what-next/</a>
+            </li>
+        </ul>
         <hr>
         <p>To be notified of the latest developments to the website and its security
             headers follow me on twitter.</p>
