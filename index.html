@@ -2,77 +2,279 @@
 <html lang="en">
 
 <head>
-  <script src="https://www.googletagmanager.com/gtag/js?id=UA-111508749-4"></script>
-  <script src="/js/gtag.js"></script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-111508749-4"></script>
+    <script src="/js/gtag.js"></script>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>HTTPS Security Headers</title>
+    <title>HTTPS Security Headers</title>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-    crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-  <link rel="stylesheet" href="/style/callout.css" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism-okaidia.min.css"
+        integrity="sha256-+8ReLFz1xaTiP3T0xcJVWrHneeFwCnJUJwvcM0L+Ufw=" crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="/style/callout.css" />
 
-  <!-- Custom styles for this template -->
-  <link href="/style/sticky-footer-navbar.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/style/sticky-footer-navbar.css" rel="stylesheet">
 </head>
 
 <body>
 
-  <header>
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="/">HTTPS Security Headers</a>
-    </nav>
-  </header>
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="/">HTTPS Security Headers</a>
+        </nav>
+    </header>
 
-  <!-- Begin page content -->
-  <main role="main" class="container">
-    <h1 class="mt-5">Sticky footer with fixed navbar</h1>
-    <p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar
-      has been added with
-      <code>padding-top: 60px;</code> on the
-      <code>body &gt; .container</code>.</p>
-    <p>Back to
-      <a href="../sticky-footer">the default sticky footer</a> minus the navbar.
-    </p>
+    <!-- Begin page content -->
+    <main role="main" class="container">
+        <!-- <h1 class="mt-5">Sticky footer with fixed navbar</h1> -->
+        <p class="mt-3">
+            In the last week or so (July 2018) Chrome 68 has been released which introduces the
+            <em>Not Secure</em> warning to the address bar of websites not using HTTPS.
+            This is another step towards serving all websites over encrypted HTTPS.
+            <a href="https://www.troyhunt.com/">Troy Hunt</a>
+            and
+            <a href="https://scotthelme.co.uk/">Scott Helme</a> have both talked extensively about why we should be securing
+            web traffic and using HTTPS even for
+            <a href="https://www.troyhunt.com/heres-why-your-static-website-needs-https/">simple static websites</a>. Fortunately, many websites are getting the
+            idea and are now securing their content with TLS certificates, however
+            it is important to know that having HTTPS on your website doesn't mean
+            it is immune from attack and more can be done to improve your website
+            security. I recently watched a talk
+            <a href="https://youtu.be/Rs1VKpjVv6g" target=”_blank”>Scott Helme did back in 2016 at OSWAP London</a>, where he outlined the
+            advantages of including additional HTTP security headers to increase
+            your website security and demonstrated how they help alleviate the chance
+            of man-in-the-middle (MITM) and cross-site scripting.
+        </p>
 
-    <warning-callout>
-      I am NOT an expert in this field, I am learning as I go along so if you see an error please correct me and create a GitHub
-      issue in the repository
-    </warning-callout>
+        <h2>TL;DR</h2>
+        <p>I am going to configure additional security headers for this website which
+            is hosted on Azure App Service with Azure CDN. We are going to use
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> to assess and rate the headings on the website.
+            Below are links to the sections.
+        </p>
+        <ul>
+            <li>
+                <a href="#warnings">Clear up the warnings and suggestions</a>
+            </li>
+            <li>
+                <a href="#x-frame-options">Add X-Frame-Options header</a>
+            </li>
+            <li>
+                <a href="#x-xss-protection">Add X-XSS-Protection header</a>
+            </li>
+            <li>
+                <a href="#x-content-type-options">Add X-Content-Type-Options header</a>
+            </li>
+            <li>
+                <a href="#referrer-policy">Add Referrer-Policy header</a>
+            </li>
+            <li>
+                <a href="#feature-policy">Add Feature-Policy header</a>
+            </li>
+            <li>
+                <a href="#content-security-policy">Add Content-Security-Policy header</a>
+            </li>
+            <li>
+                <a href="#strict-transport-security">Add Strict-Transport-Security header</a>
+            </li>
+        </ul>
 
-    <hr>
-    <div id="disqus_thread"></div>
-  </main>
+        <h2>What am I going to do?</h2>
+        <p>
+            I am going to use this website to assist me and any others in learning about security
+            headers. I will gradually add more security headers to the website and
+            document how I did so. You can find out more about the importance of
+            security headers on
+            <a href="https://securityheaders.com/about/">SecurityHeaders.com (about page)</a> which was created by Scott Helme.
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> also provides us with a rating system to how
+            well a website's security headers are configured, I will be analysing
+            this website after every additional header, hopefully we will get to
+            A+.
+        </p>
+        <p>
+            It is important to note this website is fairly basic and is just a bunch of static
+            files (css and js are not even minified). The site is hosted on Azure
+            App Service and utilise Azure CDN with a custom domain. That means the
+            web server in use is IIS so we will be configuring the headers for an
+            IIS server via a
+            <code>web.config</code> file. The whole site including the
+            <code>web.config</code> file can be found on GitHub at
+            <a href="https://github.com/TheYorkshireDev/https-security-headers">TheYorkshireDev/https-security-headers</a>
+        </p>
 
-  <footer class="footer">
-    <div class="container">
-      <span id="clock" class="text-muted google-font">loading...</span>
-    </div>
-  </footer>
+        <warning-callout>
+            I am NOT an expert in this field, I am learning as I go along so if you see an error
+            please correct me and create a GitHub issue in the repository
+        </warning-callout>
 
-  <!-- Bootstrap core JavaScript
+        <h2>Why a website and not a blog post?</h2>
+        <p>
+            I decided to create a website to document and demonstrate how to add additional security
+            headers rather than a blog post so we had a practical example. In this
+            website I have included several commonly used features websites have
+            which are less trivial than some of the examples on the web. This site
+            makes use of several different JavaScript/CSS CDNs, Google Analytics,
+            Disqus commenting, external fonts and locally developed JavaScript/CSS.
+            You can see the entire source-code on GitHub at
+            <a href="https://github.com/TheYorkshireDev/https-security-headers">TheYorkshireDev/https-security-headers</a>
+        </p>
+
+        <h2>First analysis</h2>
+
+        <p>
+            As it stands, a brand new Azure App Service website is give a HTTPS endpoint but
+            traffic to the website is not automatically redirected to HTTPS. Since
+            that is the case I will start by analysing the website on
+            <a href="https://securityheaders.com/about/">SecurityHeaders.com</a> using the HTTP endpoint. The results of which
+            don't make good reading.
+        </p>
+
+        <p>
+            As mentioned above we are explicitly passing in the HTTP reference and checking
+            <em>follow redirects</em>
+        </p>
+        <img src="img/enter_url_for_scan.png" class="img-fluid" />
+        <img src="img/first_result.png" class="img-fluid" />
+
+        <p>
+            The results returned are awful, an F. As you can see there are six security headers
+            in red indicating they are missing from the response. We will go through
+            them one-by-one and add the necessary configuration to
+            <code>web.config</code> to utilise them. You may have noticed too the grade we can achieve is
+            capped at A rather than A+, that is because we have some warnings and
+            suggestions (see below).
+        </p>
+        <img src="img/first_result_warnings.png" class="img-fluid" />
+        <p>
+            There is a single warning
+            <em>Site is using HTTP</em> and two additional headers that it is good practice
+            to remove
+            <em>Server</em> and
+            <em>X-Powered-By</em>. Once these are addressed we should not be capped at
+            an A rating on
+            <a href="https://securityheaders.com/about/">SecurityHeaders.com</a>
+        </p>
+
+        <p>
+            It is clear from the first analysis what needs to be done to improve the website's
+            security and rating. We need to make the following tweaks:
+        </p>
+        <ul>
+            <li>
+                <a href="#warnings">Clear up the warnings and suggestions</a>
+            </li>
+            <li>
+                <a href="#x-frame-options">Add X-Frame-Options header</a>
+            </li>
+            <li>
+                <a href="#x-xss-protection">Add X-XSS-Protection header</a>
+            </li>
+            <li>
+                <a href="#x-content-type-options">Add X-Content-Type-Options header</a>
+            </li>
+            <li>
+                <a href="#referrer-policy">Add Referrer-Policy header</a>
+            </li>
+            <li>
+                <a href="#feature-policy">Add Feature-Policy header</a>
+            </li>
+            <li>
+                <a href="#content-security-policy">Add Content-Security-Policy header</a>
+            </li>
+            <li>
+                <a href="#strict-transport-security">Add Strict-Transport-Security header</a>
+            </li>
+        </ul>
+
+        <h2 id="warnings" class="anchor">Warnings and Suggestions</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="x-frame-options" class="anchor">X-Frame-Options</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="x-xss-protection" class="anchor">X-XSS-Protection</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="x-content-type-options" class="anchor">X-Content-Type-Options</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="referrer-policy" class="anchor">Referrer-Policy</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="feature-policy" class="anchor">Feature-Policy</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="content-security-policy" class="anchor">Content-Security-Policy</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <h2 id="strict-transport-security" class="anchor">Strict-Transport-Security</h2>
+        <note-callout>
+            I have not implemented this header just yet.
+        </note-callout>
+
+        <hr>
+        <p>To be notified of the latest developments to the website and its security
+            headers follow me on twitter.</p>
+        <a class="twitter-follow-button" href="https://twitter.com/TheYorkshireDev" data-show-count="false">Follow @TheYorkshireDev</a>
+        <hr>
+        <div id="disqus_thread"></div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span id="clock" class="text-muted google-font">loading...</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
     ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js" integrity="sha384-sIzeKWIAHvT0Vm8QbfLCqZwBG0WMCkWVAOYd/330YSNeeQ1Y57N3T9lQz5Ry/EHH"
-  crossorigin="anonymous"></script>
-  <script src="/js/clock.js"></script>
-  <script src="/js/callout.js"></script>
-  <script src="/js/disqus.js"></script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"
+        integrity="sha384-sIzeKWIAHvT0Vm8QbfLCqZwBG0WMCkWVAOYd/330YSNeeQ1Y57N3T9lQz5Ry/EHH"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js" integrity="sha256-jc6y1s/Y+F+78EgCT/lI2lyU7ys+PFYrRSJ6q8/R8+o="
+        crossorigin="anonymous"></script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="/js/clock.js"></script>
+    <script src="/js/callout.js"></script>
+    <script src="/js/disqus.js"></script>
+    <noscript>Please enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
 
 
 </body>
