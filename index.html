@@ -164,7 +164,7 @@
             <em>Server</em> and
             <em>X-Powered-By</em>. Once these are addressed we should not be capped at
             an A rating on
-            <a href="https://securityheaders.com/about/">SecurityHeaders.com</a>
+            <a href="https://securityheaders.com">SecurityHeaders.com</a>
         </p>
 
         <p>
@@ -201,15 +201,16 @@
         <h2 id="warnings" class="anchor">Warnings and Suggestions</h2>
         <p>
             The first analysis produced a warning that the HTTP endpoint of the website does
-            not redirect to HTTPS, it also outlined the good practice of removing
+            not redirect to HTTPS, it also outlined the good practice of removing/changing
             the
             <em>Server</em> and
             <em>X-Powered-By</em> headers. In order to do this we first need to create
             a
             <code>web.config</code> file.
         </p>
-        <h4>Remove Server Version</h4>
-        <p>To remove the server response header, in the
+        <h4>Change Server Version</h4>
+        <p>To change the server response header and obfuscate the true server type,
+            in the
             <code>web.config</code> file we need the following line:
             <pre><code class="language-markup">&lt;requestFiltering removeServerHeader="true" /></code></pre>
         </p>
@@ -221,14 +222,17 @@
         </p>
 
         <h4>Remove X-AspNet-Version Header</h4>
-        <p>To remove the X-AspNet-Version response header which isn't highlighted on the analysis because it is an ISS header only, in the
+        <p>To remove the X-AspNet-Version response header which isn't highlighted on
+            the analysis because it is an ISS header only, in the
             <code>web.config</code> file we need the following line:
             <pre><code class="language-markup">&lt;httpRuntime enableVersionHeader="false"/></code></pre>
         </p>
 
         <h4>Redirect HTTP to HTTPS</h4>
-        <p>To redirect HTTP traffic to HTTPS automatically we need more than a single line in the <code>web.config</code>.
-            We add a rewrite rule that will send all traffic to HTTPS with a <code>301</code> redirect.
+        <p>To redirect HTTP traffic to HTTPS automatically we need more than a single
+            line in the
+            <code>web.config</code>. We add a rewrite rule that will send all traffic to HTTPS with a
+            <code>301</code> redirect.
             <pre><code class="language-markup">&lt;rule name="Redirect to https">
   &lt;match url="(.*)"/>
   &lt;conditions>
@@ -240,8 +244,10 @@
         </p>
 
         <h4>Review</h4>
-The complete <code>web.config</code> file for removing the warnings is below.
-        <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
+        <p>
+            The complete
+            <code>web.config</code> file for removing the warnings is below.
+            <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;configuration>
   &lt;system.web>
     &lt;httpRuntime enableVersionHeader="false"/>
@@ -270,6 +276,22 @@ The complete <code>web.config</code> file for removing the warnings is below.
   &lt;/system.webServer>
 &lt;/configuration>
 </code></pre>
+</p>
+<h4>Outcome</h4>
+<p>
+Now we have added the initial
+            <code>web.config</code>, I have re-analysed the website with the results below.
+        </p>
+        <img src="img/second_result.png" class="img-fluid" />
+        <img src="img/second_result_warnings.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has not improved and is still F, however you may
+            notice we are no longer capped at an A grade because we have addressed
+            the warnings.
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> also detects the update and removal of the
+            <em>Server</em> and
+            <em>X-Powered-By</em> headers.
+        </p>
 
         <h2 id="x-frame-options" class="anchor">X-Frame-Options</h2>
         <note-callout>
