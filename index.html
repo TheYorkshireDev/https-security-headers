@@ -325,7 +325,8 @@
         <h4>Review</h4>
         <p>
             The updated
-            <code>web.config</code> file after adding the <em>X-Frame-Options</em> header is below.
+            <code>web.config</code> file after adding the
+            <em>X-Frame-Options</em> header is below.
             <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;configuration>
   &lt;system.web>
@@ -356,6 +357,18 @@
   &lt;/system.webServer>
 &lt;/configuration>
 </code></pre>
+        </p>
+        <h4>Outcome</h4>
+        <p>
+            Now we have added
+            <em>X-Frame-Options</em> to
+            <code>web.config</code>, I have re-analysed the website with the results below.
+        </p>
+        <img src="img/third_result.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has improved slightly from F to D and you can see
+            the
+            <em>X-Frame-Options</em> header is been detected.
         </p>
 
         <h2 id="x-xss-protection" class="anchor">X-XSS-Protection</h2>
