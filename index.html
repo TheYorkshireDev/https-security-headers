@@ -149,7 +149,7 @@
         <img src="img/first_result.png" class="img-fluid" />
 
         <p>
-            The results returned are awful, an F. As you can see there are six security headers
+            The results returned are awful, an <b>F</b>. As you can see there are six security headers
             in red indicating they are missing from the response. We will go through
             them one-by-one and add the necessary configuration to
             <code>web.config</code> to utilise them. You may have noticed too the grade we can achieve is
@@ -277,6 +277,7 @@
 &lt;/configuration>
 </code></pre>
         </p>
+
         <h4>Outcome</h4>
         <p>
             Now we have added the initial
@@ -285,7 +286,7 @@
         <img src="img/second_result.png" class="img-fluid" />
         <img src="img/second_result_warnings.png" class="img-fluid" />
         <p>
-            As you can see the rating itself has not improved and is still F, however you may
+            As you can see the rating itself has not improved and is still <b>F</b>, however you may
             notice we are no longer capped at an A grade because we have addressed
             the warnings.
             <a href="https://securityheaders.com">SecurityHeaders.com</a> also detects the update and removal of the
@@ -368,7 +369,7 @@
         </p>
         <img src="img/third_result.png" class="img-fluid" />
         <p>
-            As you can see the rating itself has improved slightly from F to D and you can see
+            As you can see the rating itself has improved slightly from <b>F</b> to <b>D</b> and you can see
             the
             <em>X-Frame-Options</em> header is been detected.
         </p>
@@ -436,6 +437,18 @@
   &lt;/system.webServer>
 &lt;/configuration>
 </code></pre>
+        </p>
+
+        <h4>Outcome</h4>
+        <p>
+            Now we have added
+            <em>X-XSS-Protection</em> to
+            <code>web.config</code>, I have re-analysed the website with the results below.
+        </p>
+        <img src="img/fourth_result.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has stayed the same as <b>D</b> but the
+            <em>X-XSS-Protection</em> has been added.
         </p>
 
         <h2 id="x-content-type-options" class="anchor">X-Content-Type-Options</h2>
