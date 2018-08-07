@@ -471,37 +471,51 @@
             <code>web.config</code> file after adding the
             <em>X-Content-Type-Options</em> header is below.
             <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
-    &lt;configuration>
-      &lt;system.web>
-        &lt;httpRuntime enableVersionHeader="false"/>
-      &lt;/system.web>
-      &lt;system.webServer>
-        &lt;security>
-          &lt;requestFiltering removeServerHeader="true" />
-        &lt;/security>
-        &lt;httpProtocol>
-          &lt;customHeaders>
-            &lt;add name="X-Content-Type-Options" value="nosniff" />
-            &lt;add name="X-Frame-Options" value="DENY" />
-            &lt;add name="X-XSS-Protection" value="1; mode=block" />
-            &lt;remove name="X-Powered-By"/>
-          &lt;/customHeaders>
-        &lt;/httpProtocol>
-        &lt;rewrite>
-          &lt;rules>
-            &lt;rule name="Redirect to https">
-              &lt;match url="(.*)"/>
-              &lt;conditions>
-                &lt;add input="{HTTPS}" pattern="Off"/>
-                &lt;add input="{REQUEST_METHOD}" pattern="^get$|^head$" />
-              &lt;/conditions>
-              &lt;action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent"/>
-            &lt;/rule>
-          &lt;/rules>
-        &lt;/rewrite>
-      &lt;/system.webServer>
-    &lt;/configuration>
-    </code></pre>
+&lt;configuration>
+  &lt;system.web>
+    &lt;httpRuntime enableVersionHeader="false"/>
+  &lt;/system.web>
+  &lt;system.webServer>
+    &lt;security>
+      &lt;requestFiltering removeServerHeader="true" />
+    &lt;/security>
+    &lt;httpProtocol>
+      &lt;customHeaders>
+        &lt;add name="X-Content-Type-Options" value="nosniff" />
+        &lt;add name="X-Frame-Options" value="DENY" />
+        &lt;add name="X-XSS-Protection" value="1; mode=block" />
+        &lt;remove name="X-Powered-By"/>
+      &lt;/customHeaders>
+    &lt;/httpProtocol>
+    &lt;rewrite>
+      &lt;rules>
+        &lt;rule name="Redirect to https">
+          &lt;match url="(.*)"/>
+          &lt;conditions>
+            &lt;add input="{HTTPS}" pattern="Off"/>
+            &lt;add input="{REQUEST_METHOD}" pattern="^get$|^head$" />
+          &lt;/conditions>
+          &lt;action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent"/>
+        &lt;/rule>
+      &lt;/rules>
+    &lt;/rewrite>
+  &lt;/system.webServer>
+&lt;/configuration>
+</code></pre>
+        </p>
+
+        <h4>Outcome</h4>
+        <p>
+            Now we have added
+            <em>X-Content-Type-Options</em> to
+            <code>web.config</code>, I have re-analysed the website with the results below.
+        </p>
+        <img src="img/fifth_result.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has improved from
+            <b>D</b> to
+            <b>C</b> and the
+            <em>X-Content-Type-Options</em> header is been detected.
         </p>
 
         <h2 id="strict-transport-security" class="anchor">Strict-Transport-Security</h2>
