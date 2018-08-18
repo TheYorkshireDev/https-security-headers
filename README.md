@@ -7,7 +7,7 @@ A repository holding the source code for <a href="https://www.httpssecurityheade
 - [x] Clear up the warnings and suggestions
 - [x] Add X-Frame-Options header
 - [x] Add X-XSS-Protection header
-- [ ] Add X-Content-Type-Options header
+- [x] Add X-Content-Type-Options header
 - [ ] Add Strict-Transport-Security header
 - [ ] Add Content-Security-Policy header
 - [ ] Add Referrer-Policy header

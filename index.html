@@ -519,9 +519,113 @@
         </p>
 
         <h2 id="strict-transport-security" class="anchor">Strict-Transport-Security</h2>
-        <note-callout>
-            I have not implemented this header just yet.
-        </note-callout>
+        <p>
+            The Strict-Transport-Security header enables HTTP Strict Transport Security (HSTS)
+            between a web server and the browser. I am not going to attempt to explain
+            the ins and outs of HSTS when Scott Helme has done so excellently in
+            his blog post:
+            <a href="https://scotthelme.co.uk/hsts-the-missing-link-in-tls">HSTS - The missing link in Transport Layer Security</a>. Essentially,
+            HSTS enforces the use of TLS when navigating to a website preventing
+            a user going to the
+            <code>http://</code> endpoint, thus mitigating the chance of a man in the middle (MiTM) attack
+            further.
+        </p>
+
+        <h4>Implementing HSTS</h4>
+        <p>
+            There are three directives to the Strict-Transport-Security header:
+        </p>
+        <ul>
+            <li>
+                <code>max-age</code> is the number of seconds which the browser should treat the host
+                as it's HSTS host.
+            </li>
+            <li>
+                <code>includeSubDomains</code> is an optional directive which as expected, informs the browser
+                that all subdomains are to be treated as HSTS hosts.
+            </li>
+            <li>
+                <code>preload</code> some browsers are released with a preloaded list of websites which
+                it knows HSTS is enabled, if your website is on these lists you should
+                set this directive.
+            </li>
+        </ul>
+
+        <p>
+            We should utilise HSTS, and since this website is brand spanking new all endpoints
+            should be secured with
+            <code>https://</code> therefore I am going to be setting the
+            <code>max-age</code> to a high number. I have not preloaded this website to the preload lists
+            so will not be using that directive.
+        </p>
+
+        <important-callout>
+            It should be noted that best practice for enabling HSTS is to increase the max-age
+            incrementally while you gain confidence that adding the header does not
+            break any http:// endpoints you may have missed.
+        </important-callout>
+
+        <p>
+            To include the HSTS header we need to add an outbound rule in the
+            <code>web.config</code>:
+            <pre><code class="language-markup">&lt;outboundRules>
+  &lt;rule name="Add HSTS Header" enabled="true">
+    &lt;match serverVariable="RESPONSE_Strict_Transport_Security" pattern=".*" />
+    &lt;conditions>
+      &lt;add input="{HTTPS}" pattern="on" ignoreCase="true" />
+    &lt;/conditions>
+    &lt;action type="Rewrite" value="max-age=31536000; includeSubDomains;" />
+  &lt;/rule>
+&lt;/outboundRules></code></pre>
+        </p>
+
+        <h4>Review</h4>
+        <p>
+            The updated
+            <code>web.config</code> file after adding the
+            <em>X-Content-Type-Options</em> header is below.
+            <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;configuration>
+  &lt;system.web>
+    &lt;httpRuntime enableVersionHeader="false"/>
+  &lt;/system.web>
+  &lt;system.webServer>
+    &lt;security>
+      &lt;requestFiltering removeServerHeader="true" />
+    &lt;/security>
+    &lt;httpProtocol>
+      &lt;customHeaders>
+        &lt;add name="X-Content-Type-Options" value="nosniff" />
+        &lt;add name="X-Frame-Options" value="DENY" />
+        &lt;add name="X-XSS-Protection" value="1; mode=block" />
+        &lt;remove name="X-Powered-By"/>
+      &lt;/customHeaders>
+    &lt;/httpProtocol>
+    &lt;rewrite>
+      &lt;rules>
+        &lt;rule name="Redirect to https">
+          &lt;match url="(.*)"/>
+          &lt;conditions>
+            &lt;add input="{HTTPS}" pattern="Off"/>
+            &lt;add input="{REQUEST_METHOD}" pattern="^get$|^head$" />
+          &lt;/conditions>
+          &lt;action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent"/>
+        &lt;/rule>
+      &lt;/rules>
+      &lt;outboundRules>
+        &lt;rule name="Add HSTS Header" enabled="true">
+          &lt;match serverVariable="RESPONSE_Strict_Transport_Security" pattern=".*" />
+          &lt;conditions>
+            &lt;add input="{HTTPS}" pattern="on" ignoreCase="true" />
+          &lt;/conditions>
+          &lt;action type="Rewrite" value="max-age=31536000; includeSubDomains;" />
+        &lt;/rule>
+      &lt;/outboundRules>
+    &lt;/rewrite>
+  &lt;/system.webServer>
+&lt;/configuration>
+</code></pre>
+        </p>
 
         <h2 id="content-security-policy" class="anchor">Content-Security-Policy</h2>
         <note-callout>
