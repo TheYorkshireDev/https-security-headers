@@ -643,6 +643,18 @@
             <em>Strict-Transport-Security</em> header is been detected albeit with the warning that the <code>max-age</code> is too low.
         </p>
 
+        <h4>Outcome 2</h4>
+        <p>
+            After increasing the <code>max-age</code> to <b>31536000</b> (365 days) I then re-analysed the website with the results below.
+        </p>
+        <img src="img/seventh_result.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has improved from
+            <b>C</b> to
+            <b>B</b> and the
+            <em>Strict-Transport-Security</em> header is been detected with appropriate values.
+        </p>
+
         <h2 id="content-security-policy" class="anchor">Content-Security-Policy</h2>
         <note-callout>
             I have not implemented this header just yet.
