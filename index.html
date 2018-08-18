@@ -566,7 +566,9 @@
         </important-callout>
 
         <p>
-            To include the HSTS header we need to add an outbound rule in the
+            To include the
+            <em>Strict-Transport-Security</em> header we need to add an outbound rule
+            in the
             <code>web.config</code>:
             <pre><code class="language-markup">&lt;outboundRules>
   &lt;rule name="Add HSTS Header" enabled="true">
@@ -583,7 +585,7 @@
         <p>
             The updated
             <code>web.config</code> file after adding the
-            <em>X-Content-Type-Options</em> header is below.
+            <em>Strict-Transport-Security</em> header is below.
             <pre><code class="language-markup">&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;configuration>
   &lt;system.web>
@@ -625,6 +627,20 @@
   &lt;/system.webServer>
 &lt;/configuration>
 </code></pre>
+        </p>
+
+        <h4>Outcome 1</h4>
+        <p>
+            I heeded my own advice on not setting the
+            <code>max-age</code> too high while testing, so for the first analysis I set the max age
+            to 10 minutes (600 seconds) and the results are below.
+        </p>
+        <img src="img/sixth_result.png" class="img-fluid" />
+        <img src="img/sixth_result_warnings.png" class="img-fluid" />
+        <p>
+            As you can see the rating itself has stayed the same
+            <b>C</b> and the
+            <em>Strict-Transport-Security</em> header is been detected albeit with the warning that the <code>max-age</code> is too low.
         </p>
 
         <h2 id="content-security-policy" class="anchor">Content-Security-Policy</h2>
