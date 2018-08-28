@@ -41,28 +41,32 @@
         <!-- <h1 class="mt-5">Sticky footer with fixed navbar</h1> -->
         <p class="mt-3">
             In the last week or so (July 2018) Chrome 68 has been released which introduces the
-            <em>Not Secure</em> warning to the address bar of websites not using HTTPS.
-            This is another step towards serving all websites over encrypted HTTPS.
+            <em>Not Secure</em> warning to the address bar of websites not using
+            HTTPS. This is another step towards serving all websites over encrypted
+            HTTPS.
             <a href="https://www.troyhunt.com/">Troy Hunt</a>
             and
-            <a href="https://scotthelme.co.uk/">Scott Helme</a> have both talked extensively about why we should be securing
-            web traffic and using HTTPS even for
-            <a href="https://www.troyhunt.com/heres-why-your-static-website-needs-https/">simple static websites</a>. Fortunately, many websites are getting the
-            idea and are now securing their content with TLS certificates, however
-            it is important to know that having HTTPS on your website doesn't mean
-            it is immune from attack and more can be done to improve your website
-            security. I recently watched a talk
-            <a href="https://youtu.be/Rs1VKpjVv6g" target=”_blank”>Scott Helme did back in 2016 at OSWAP London</a>, where he outlined the
-            advantages of including additional HTTP security headers to increase
-            your website security and demonstrated how they help alleviate the chance
-            of man-in-the-middle (MITM) and cross-site scripting.
+            <a href="https://scotthelme.co.uk/">Scott Helme</a> have both talked
+            extensively about why we should be securing web traffic and using HTTPS
+            even for
+            <a href="https://www.troyhunt.com/heres-why-your-static-website-needs-https/">simple
+                static websites</a>. Fortunately, many websites are getting the idea
+            and are now securing their content with TLS certificates, however it
+            is important to know that having HTTPS on your website doesn't mean it
+            is immune from attack and more can be done to improve your website security.
+            I recently watched a talk
+            <a href="https://youtu.be/Rs1VKpjVv6g" target=”_blank”>Scott Helme did
+                back in 2016 at OSWAP London</a>, where he outlined the advantages
+            of including additional HTTP security headers to increase your website
+            security and demonstrated how they help alleviate the chance of man-in-the-middle
+            (MITM) and cross-site scripting.
         </p>
 
         <h2>TL;DR</h2>
         <p>I am going to configure additional security headers for this website which
             is hosted on Azure App Service with Azure CDN. We are going to use
-            <a href="https://securityheaders.com">SecurityHeaders.com</a> to assess and rate the headings on the website.
-            Below are links to the sections.
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> to assess
+            and rate the headings on the website. Below are links to the sections.
         </p>
         <ul>
             <li>
@@ -78,7 +82,9 @@
                 <a href="#x-content-type-options">Add X-Content-Type-Options header</a>
             </li>
             <li>
-                <a href="#strict-transport-security">Add Strict-Transport-Security header</a>
+                <a href="#strict-transport-security">Add Strict-Transport-Security
+                    header
+                </a>
             </li>
             <li>
                 <a href="#content-security-policy">Add Content-Security-Policy header</a>
@@ -97,11 +103,13 @@
             headers. I will gradually add more security headers to the website and
             document how I did so. You can find out more about the importance of
             security headers on
-            <a href="https://securityheaders.com/about/">SecurityHeaders.com (about page)</a> which was created by Scott Helme.
-            <a href="https://securityheaders.com">SecurityHeaders.com</a> also provides us with a rating system to how
-            well a website's security headers are configured, I will be analysing
-            this website after every additional header, hopefully we will get to
-            A+.
+            <a href="https://securityheaders.com/about/">SecurityHeaders.com (about
+                page)
+            </a> which was created by Scott Helme.
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> also provides
+            us with a rating system to how well a website's security headers are
+            configured, I will be analysing this website after every additional header,
+            hopefully we will get to A+.
         </p>
         <p>
             It is important to note this website is fairly basic and is just a bunch of static
@@ -137,8 +145,8 @@
             As it stands, a brand new Azure App Service website is give a HTTPS endpoint but
             traffic to the website is not automatically redirected to HTTPS. Since
             that is the case I will start by analysing the website on
-            <a href="https://securityheaders.com/about/">SecurityHeaders.com</a> using the HTTP endpoint. The results of which
-            don't make good reading.
+            <a href="https://securityheaders.com/about/">SecurityHeaders.com</a>
+            using the HTTP endpoint. The results of which don't make good reading.
         </p>
 
         <p>
@@ -153,18 +161,18 @@
             <b>F</b>. As you can see there are six security headers in red indicating
             they are missing from the response. We will go through them one-by-one
             and add the necessary configuration to
-            <code>web.config</code> to utilise them. You may have noticed too the grade we can achieve is
-            capped at A rather than A+, that is because we have some warnings and
-            suggestions (see below).
+            <code>web.config</code> to utilise them. You may have noticed too the
+            grade we can achieve is capped at A rather than A+, that is because we
+            have some warnings and suggestions (see below).
         </p>
         <img src="img/first_result_warnings.png" class="img-fluid" />
         <p>
             There is a single warning
-            <em>Site is using HTTP</em> and two additional headers that it is good practice
-            to remove
+            <em>Site is using HTTP</em> and two additional headers that it is good
+            practice to remove
             <em>Server</em> and
-            <em>X-Powered-By</em>. Once these are addressed we should not be capped at
-            an A rating on
+            <em>X-Powered-By</em>. Once these are addressed we should not be capped
+            at an A rating on
             <a href="https://securityheaders.com">SecurityHeaders.com</a>
         </p>
 
@@ -186,7 +194,9 @@
                 <a href="#x-content-type-options">Add X-Content-Type-Options header</a>
             </li>
             <li>
-                <a href="#strict-transport-security">Add Strict-Transport-Security header</a>
+                <a href="#strict-transport-security">Add Strict-Transport-Security
+                    header
+                </a>
             </li>
             <li>
                 <a href="#content-security-policy">Add Content-Security-Policy header</a>
@@ -223,8 +233,8 @@
         </p>
 
         <h4>Remove X-AspNet-Version Header</h4>
-        <p>To remove the X-AspNet-Version response header which isn't highlighted on
-            the analysis because it is an ISS header only, in the
+        <p>To remove the X-AspNet-Version response header which isn't highlighted
+            on the analysis because it is an ISS header only, in the
             <code>web.config</code> file we need the following line:
             <pre><code class="language-markup">&lt;httpRuntime enableVersionHeader="false"/></code></pre>
         </p>
@@ -232,7 +242,8 @@
         <h4>Redirect HTTP to HTTPS</h4>
         <p>To redirect HTTP traffic to HTTPS automatically we need more than a single
             line in the
-            <code>web.config</code>. We add a rewrite rule that will send all traffic to HTTPS with a
+            <code>web.config</code>. We add a rewrite rule that will send all traffic
+            to HTTPS with a
             <code>301</code> redirect.
             <pre><code class="language-markup">&lt;rule name="Redirect to https">
   &lt;match url="(.*)"/>
@@ -282,15 +293,17 @@
         <h4>Outcome</h4>
         <p>
             Now we have added the initial
-            <code>web.config</code>, I have re-analysed the website with the results below.
+            <code>web.config</code>, I have re-analysed the website with the results
+            below.
         </p>
         <img src="img/second_result.png" class="img-fluid" />
         <img src="img/second_result_warnings.png" class="img-fluid" />
         <p>
             As you can see the rating itself has not improved and is still
-            <b>F</b>, however you may notice we are no longer capped at an A grade because
-            we have addressed the warnings.
-            <a href="https://securityheaders.com">SecurityHeaders.com</a> also detects the update and removal of the
+            <b>F</b>, however you may notice we are no longer capped at an A grade
+            because we have addressed the warnings.
+            <a href="https://securityheaders.com">SecurityHeaders.com</a> also detects
+            the update and removal of the
             <em>Server</em> and
             <em>X-Powered-By</em> headers.
         </p>
@@ -314,13 +327,14 @@
                 <code>SAMEORIGIN</code> allows you to frame your own site.
             </li>
             <li>
-                <code>ALLOW-FROM https://example.com/</code> is an example of specifying a subset of websites that is allowed.
-                to frame your website
+                <code>ALLOW-FROM https://example.com/</code> is an example of specifying
+                a subset of websites that is allowed. to frame your website
             </li>
         </ul>
         <p>
             There is no reason for framing this website so I am going to add the
-            <code>DENY</code> rule as a custom header with the following line in the
+            <code>DENY</code> rule as a custom header with the following line in
+            the
             <code>web.config</code>:
             <pre><code class="language-markup">&lt;add name="X-Frame-Options" value="DENY" /></code></pre>
         </p>
@@ -366,7 +380,8 @@
         <p>
             Now we have added
             <em>X-Frame-Options</em> to
-            <code>web.config</code>, I have re-analysed the website with the results below.
+            <code>web.config</code>, I have re-analysed the website with the results
+            below.
         </p>
         <img src="img/third_result.png" class="img-fluid" />
         <p>
@@ -390,15 +405,17 @@
                 <code>1</code> which enables the protection.
             </li>
             <li>
-                <code>1; mode=block</code> which enables the protection and tells the browser to block the
-                response if it detects an attack rather than sanitising the script.
+                <code>1; mode=block</code> which enables the protection and tells
+                the browser to block the response if it detects an attack rather
+                than sanitising the script.
             </li>
         </ul>
         <p>
             We should utilise reflective XSS protection if it is available to us including enabling
             the blocking of responses if an attack is detected, so I am going to
             add the
-            <code>1; mode=block</code> rule as a custom header with the following line in the
+            <code>1; mode=block</code> rule as a custom header with the following
+            line in the
             <code>web.config</code>:
             <pre><code class="language-markup">&lt;add name="X-XSS-Protection" value="1; mode=block" /></code></pre>
         </p>
@@ -445,7 +462,8 @@
         <p>
             Now we have added
             <em>X-XSS-Protection</em> to
-            <code>web.config</code>, I have re-analysed the website with the results below.
+            <code>web.config</code>, I have re-analysed the website with the results
+            below.
         </p>
         <img src="img/fourth_result.png" class="img-fluid" />
         <p>
@@ -460,7 +478,8 @@
             stop trying to mine-sniff the content-type of a response rather than
             using the declared from the server. This header only has one possible
             value
-            <code>nosniff</code> so is easy to add by including the the following line in the
+            <code>nosniff</code> so is easy to add by including the the following
+            line in the
             <code>web.config</code>:
             <pre><code class="language-markup">&lt;add name="X-Content-Type-Options" value="nosniff" /></code></pre>
         </p>
@@ -508,7 +527,8 @@
         <p>
             Now we have added
             <em>X-Content-Type-Options</em> to
-            <code>web.config</code>, I have re-analysed the website with the results below.
+            <code>web.config</code>, I have re-analysed the website with the results
+            below.
         </p>
         <img src="img/fifth_result.png" class="img-fluid" />
         <p>
@@ -524,11 +544,12 @@
             between a web server and the browser. I am not going to attempt to explain
             the ins and outs of HSTS when Scott Helme has done so excellently in
             his blog post:
-            <a href="https://scotthelme.co.uk/hsts-the-missing-link-in-tls">HSTS - The missing link in Transport Layer Security</a>. Essentially,
+            <a href="https://scotthelme.co.uk/hsts-the-missing-link-in-tls">HSTS
+                - The missing link in Transport Layer Security</a>. Essentially,
             HSTS enforces the use of TLS when navigating to a website preventing
             a user going to the
-            <code>http://</code> endpoint, thus mitigating the chance of a man in the middle (MiTM) attack
-            further.
+            <code>http://</code> endpoint, thus mitigating the chance of a man in
+            the middle (MiTM) attack further.
         </p>
 
         <h4>Implementing HSTS</h4>
@@ -537,17 +558,18 @@
         </p>
         <ul>
             <li>
-                <code>max-age</code> is the number of seconds which the browser should treat the host
-                as it's HSTS host.
+                <code>max-age</code> is the number of seconds which the browser should
+                treat the host as it's HSTS host.
             </li>
             <li>
-                <code>includeSubDomains</code> is an optional directive which as expected, informs the browser
-                that all subdomains are to be treated as HSTS hosts.
+                <code>includeSubDomains</code> is an optional directive which as
+                expected, informs the browser that all subdomains are to be treated
+                as HSTS hosts.
             </li>
             <li>
-                <code>preload</code> some browsers are released with a preloaded list of websites which
-                it knows HSTS is enabled, if your website is on these lists you should
-                set this directive.
+                <code>preload</code> some browsers are released with a preloaded
+                list of websites which it knows HSTS is enabled, if your website
+                is on these lists you should set this directive.
             </li>
         </ul>
 
@@ -555,8 +577,8 @@
             We should utilise HSTS, and since this website is brand spanking new all endpoints
             should be secured with
             <code>https://</code> therefore I am going to be setting the
-            <code>max-age</code> to a high number. I have not preloaded this website to the preload lists
-            so will not be using that directive.
+            <code>max-age</code> to a high number. I have not preloaded this website
+            to the preload lists so will not be using that directive.
         </p>
 
         <important-callout>
@@ -567,8 +589,8 @@
 
         <p>
             To include the
-            <em>Strict-Transport-Security</em> header we need to add an outbound rule
-            in the
+            <em>Strict-Transport-Security</em> header we need to add an outbound
+            rule in the
             <code>web.config</code>:
             <pre><code class="language-markup">&lt;outboundRules>
   &lt;rule name="Add HSTS Header" enabled="true">
@@ -632,34 +654,81 @@
         <h4>Outcome 1</h4>
         <p>
             I heeded my own advice on not setting the
-            <code>max-age</code> too high while testing, so for the first analysis I set the max age
-            to 10 minutes (600 seconds) and the results are below.
+            <code>max-age</code> too high while testing, so for the first analysis
+            I set the max age to 10 minutes (600 seconds) and the results are below.
         </p>
         <img src="img/sixth_result.png" class="img-fluid" />
         <img src="img/sixth_result_warnings.png" class="img-fluid" />
         <p>
             As you can see the rating itself has stayed the same
             <b>C</b> and the
-            <em>Strict-Transport-Security</em> header is been detected albeit with the warning that the <code>max-age</code> is too low.
+            <em>Strict-Transport-Security</em> header is been detected albeit with
+            the warning that the <code>max-age</code> is too low.
         </p>
 
         <h4>Outcome 2</h4>
         <p>
-            After increasing the <code>max-age</code> to <b>31536000</b> (365 days) I then re-analysed the website with the results below.
+            After increasing the <code>max-age</code> to <b>31536000</b> (365 days)
+            I then re-analysed the website with the results below.
         </p>
         <img src="img/seventh_result.png" class="img-fluid" />
         <p>
             As you can see the rating itself has improved from
             <b>C</b> to
             <b>B</b> and the
-            <em>Strict-Transport-Security</em> header is been detected with appropriate values.
+            <em>Strict-Transport-Security</em> header is been detected with appropriate
+            values.
         </p>
 
         <h2 id="content-security-policy" class="anchor">Content-Security-Policy</h2>
-        <note-callout>
-            I have not implemented this header just yet.
-        </note-callout>
 
+        <p>
+            The Content-Security-Policy (CSP) header defines a whitelist of resource locations
+            the browser should use when loading the website. CSP goes one step further,
+            also specifying the resource type which can be loaded from the endpoint.
+            In real terms it prevents any unauthorized scripts loading from your
+            website assisting in mitigating the chance of cross site scripting (XSS)
+            attacks for users on the website. For further information about CSP I
+            recommend reading over Scott Helme's blog post on it:
+            <a href="https://scotthelme.co.uk/content-security-policy-an-introduction/">Content
+                Security Policy - An Introduction</a>.
+        </p>
+
+        <h4>A Report Only Mode?</h4>
+        <p>
+            You may spot some of the difficulties in trying to implement CSP straight away because
+            if you get something wrong it can fundamentally break your website. Fortunately
+            one of the recommend precursor to implementing a CSP header is to use
+            the <code>Content-Security-Policy-Report-Only</code> header.
+            This header works in the same way as the <code>Content-Security-Policy</code>            header
+            only instead of blocking resources that do not meed the defined policy
+            a report will be generated. This report is sent to the website author
+            allowing them to detect volitions and refine the policy before setting
+            the actual CSP header. that will not block any of the resources but report
+            violations.
+        </p>
+
+        <p>
+            As mentioned above when violations occur on either of the CSP headers, reports can
+            be generated and sent to the website's authors. This allows for debugging
+            into incorrectly set policies and/or attempts to link malicious scripts
+            on your website. Fortunately Scott Helme (yup that guy again) has created
+            <a href="https://report-uri.com">https://report-uri.com</a>
+            a website that will receive your CSP reports and send you notifications if/when they
+            occur.
+        </p>
+
+        <h4>Report Only Policy</h4>
+        <p>
+            To assist in creating the correct policy for this website I am going to turn on report-only
+            mode and tell the browser to report all resources which are loaded. To
+            do this we add the
+            <em>Content-Security-Policy-Report-Only</em> custom header with the following
+            line in the
+            <code>web.config</code>:
+            <pre><code class="language-markup">&lt;add name="Content-Security-Policy-Report-Only" value="default-src 'none'; report-uri https://xxxxx.report-uri.com/r/d/csp/reportOnly" /></code></pre>
+            Where the <code>xxxxx</code> is your custom report-url address.
+        </p>
         <h2 id="referrer-policy" class="anchor">Referrer-Policy</h2>
         <note-callout>
             I have not implemented this header just yet.
@@ -697,7 +766,9 @@
         <hr>
         <p>To be notified of the latest developments to the website and its security
             headers follow me on twitter.</p>
-        <a class="twitter-follow-button" href="https://twitter.com/TheYorkshireDev" data-show-count="false">Follow @TheYorkshireDev</a>
+        <a class="twitter-follow-button" href="https://twitter.com/TheYorkshireDev" data-show-count="false">Follow
+            @TheYorkshireDev
+        </a>
         <hr>
         <div id="disqus_thread"></div>
     </main>
